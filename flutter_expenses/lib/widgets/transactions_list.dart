@@ -29,23 +29,27 @@ class TransactionList extends StatelessWidget {
                   itemBuilder: (ctx, index) =>
                       TransactionCard(transactions[index], deleteTransaction),
                 )
-              : Column(
-                  children: <Widget>[
-                    Text(
-                      'No transactions added yet!',
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                        height: 200,
-                        child: Image.asset(
-                          'assets/images/waiting.png',
-                          fit: BoxFit.cover,
-                        )),
-                  ],
-                ),
+              : LayoutBuilder(builder: buildNoTx),
+    );
+  }
+
+  Column buildNoTx(BuildContext context, BoxConstraints boxConstraints) {
+    return Column(
+      children: <Widget>[
+        Text(
+          'No transactions added yet!',
+          style: Theme.of(context).textTheme.title,
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Container(
+            height: boxConstraints.maxHeight * 0.6,
+            child: Image.asset(
+              'assets/images/waiting.png',
+              fit: BoxFit.cover,
+            )),
+      ],
     );
   }
 }

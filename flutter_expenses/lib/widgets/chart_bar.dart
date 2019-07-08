@@ -22,7 +22,9 @@ class ChartBar extends StatelessWidget {
         // Wrapping in a container keeps everything aligned properly if the fitted box changes the child size
         Container(
             height: constraints.maxHeight * 0.15,
-            child: FittedBox(child: Text('\$${amount.toStringAsFixed(0)}'))),
+            child: FittedBox(
+                child: Text('\$${amount.toStringAsFixed(0)}',
+                    style: Theme.of(context).textTheme.body1))),
         Container(
           height: constraints.maxHeight *
               0.6, // Dynamically set height based on available space
@@ -54,7 +56,7 @@ class ChartBar extends StatelessWidget {
         ),
         Container(
           height: constraints.maxHeight * 0.15,
-          child: Text('$label'),
+          child: Text('$label', style: Theme.of(context).textTheme.body1),
         ),
       ],
     );
