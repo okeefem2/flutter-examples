@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quiz/widgets/answer.dart';
-import 'package:flutter_quiz/widgets/question.dart';
 import 'package:flutter_quiz/widgets/quiz.dart';
 import 'package:flutter_quiz/widgets/result.dart';
 
@@ -50,7 +48,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 //  Adding the _ to the class name makes it private by convention
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  // with keyword used for mixins
+  // WidgetsBindingObserver is a mixin giving access to app lifecycle hooks
   //  Adding the _ to the property makes it private by convention
   int _questionIndex = 0;
 
@@ -93,17 +93,27 @@ class _MyHomePageState extends State<MyHomePage> {
     },
   ];
 
-  // void _incrementCounter() {
-  // // set state calls the build method of the widget that the state belongs to
-  //   setState(() {
-  //     // This call to setState tells the Flutter framework that something has
-  //     // changed in this State, which causes it to rerun the build method below
-  //     // so that the display can reflect the updated values. If we changed
-  //     // _counter without calling setState(), then the build method would not be
-  //     // called again, and so nothing would appear to happen.
-  //     _counter++;
-  //   });
-  // }
+  // From the WidgetsBindingObserver mixin
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Is fired whenever the app lifecycle is changed
+    super.didChangeAppLifecycleState(state);
+  }
+
+  void initState() {
+    // Register an observer to the didChangeAppLifecycleState
+    // by passing this, since this implements didChangeAppLifecycleState it will observe it
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Cleanup the observers to avoid memory leaks
+    // Suspended may not be caught by the observer since we are clearing it out here
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   void _answerQuestion(int score) {
     // print('Answer Chosen $answer');

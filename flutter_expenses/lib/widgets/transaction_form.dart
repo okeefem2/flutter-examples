@@ -57,15 +57,16 @@ class _TransactionFormState extends State<TransactionForm> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             TextField(
-              decoration: InputDecoration(labelText: 'Title'),
+              decoration: const InputDecoration(labelText: 'Title'),
               controller: _titleController,
               onSubmitted: (val) => _submit(),
               // onChanged: (val) => _title = val,
             ),
             TextField(
-              decoration: InputDecoration(labelText: 'Amount'),
+              decoration: const InputDecoration(labelText: 'Amount'),
               controller: _amountController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               onSubmitted: (val) => _submit(),
               // onChanged: (val) => _amount = val,
             ),
@@ -75,13 +76,13 @@ class _TransactionFormState extends State<TransactionForm> {
                 children: <Widget>[
                   Expanded(
                     child: _date == null
-                        ? Text('No Date Chosen')
+                        ? const Text('No Date Chosen')
                         : Text(
                             'Date: ${DateFormat('yyyy-MM-dd').format(_date)}'),
                   ),
                   FlatButton(
                     textColor: Theme.of(context).primaryColor,
-                    child: Text(
+                    child: const Text(
                       'Choose Date',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -91,7 +92,7 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
             ),
             RaisedButton(
-              child: Text(
+              child: const Text(
                 'Add Transaction',
                 style: TextStyle(fontSize: 18),
               ),

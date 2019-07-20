@@ -131,68 +131,83 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Could extract the scaffold body to a new widget that relies on the mediaquery to avoid everything else from being rebuilt here too
+    // But this app is pretty small, so not a big gain there
     final mediaQuery = MediaQuery.of(context);
-    ObstructingPreferredSizeWidget appBar = Platform.isAndroid
-        ? AppBar(
-            title: Text('Flutter Expense App'),
-            actions: <Widget>[
-              FlatButton(
-                child: Icon(Icons.add),
-                onPressed: () => _showTransactionForm(context),
-                textColor: Colors.white,
-              )
-            ],
-          )
-        : CupertinoNavigationBar(
-            middle: Text('Flutter Expense App'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                GestureDetector(
-                    onTap: () => _showTransactionForm(context),
-                    child: Icon(CupertinoIcons.add)),
-              ],
-            ),
-          );
+    ObstructingPreferredSizeWidget appBar =
+        Platform.isAndroid ? buildAndroidBar(context) : buildIOSBar(context);
 
-    final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final chart = Container(
-      height: (mediaQuery.size.height -
-              appBar.preferredSize.height -
-              mediaQuery.padding.top) *
-          (mediaQuery.orientation == Orientation.portrait ? 0.2 : 0.4),
-      child: Chart(recentTransactions: _recentTransactions),
-    );
-    final txList = Container(
-      height: (mediaQuery.size.height -
-              appBar.preferredSize.height -
-              mediaQuery.padding.top) *
+    return Platform.isAndroid
+        ? Scaffold(
+            appBar: appBar,
+            body: buildScaffoldBody(
+                mediaQuery, context, appBar.preferredSize.height),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () => _showTransactionForm(context),
+              tooltip: 'Add Transaction',
+              child: const Icon(Icons.add),
+            ),
+          )
+        : CupertinoPageScaffold(
+            navigationBar: appBar,
+            child: buildScaffoldBody(
+                mediaQuery, context, appBar.preferredSize.height),
+          );
+  }
+
+  Container buildTxList(MediaQueryData mediaQuery, double appBarHeight) {
+    return Container(
+      height: (mediaQuery.size.height - appBarHeight - mediaQuery.padding.top) *
           (mediaQuery.orientation == Orientation.portrait ? 0.8 : 0.6),
       child: TransactionList(
         transactions: transactions,
         deleteTransaction: _deleteTransaction,
       ),
     );
-    return Platform.isAndroid
-        ? Scaffold(
-            appBar: appBar,
-            body: buildScaffoldBody(isLandscape, context, chart, txList),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => _showTransactionForm(context),
-              tooltip: 'Add Transaction',
-              child: Icon(Icons.add),
-            ),
-          )
-        : CupertinoPageScaffold(
-            navigationBar: appBar,
-            child: buildScaffoldBody(isLandscape, context, chart, txList),
-          );
   }
 
-  Widget buildScaffoldBody(bool isLandscape, BuildContext context,
-      Container chart, Container txList) {
+  Container buildChart(MediaQueryData mediaQuery, double appBarHeight) {
+    return Container(
+      height: (mediaQuery.size.height - appBarHeight - mediaQuery.padding.top) *
+          (mediaQuery.orientation == Orientation.portrait ? 0.2 : 0.4),
+      child: Chart(recentTransactions: _recentTransactions),
+    );
+  }
+
+  CupertinoNavigationBar buildIOSBar(BuildContext context) {
+    return CupertinoNavigationBar(
+      middle: const Text('Flutter Expense App'),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          GestureDetector(
+              onTap: () => _showTransactionForm(context),
+              child: const Icon(CupertinoIcons.add)),
+        ],
+      ),
+    );
+  }
+
+  AppBar buildAndroidBar(BuildContext context) {
+    return AppBar(
+      title: const Text('Flutter Expense App'),
+      actions: <Widget>[
+        FlatButton(
+          child: Icon(Icons.add),
+          onPressed: () => _showTransactionForm(context),
+          textColor: Colors.white,
+        )
+      ],
+    );
+  }
+
+  Widget buildScaffoldBody(
+      MediaQueryData mediaQuery, BuildContext context, double appBarHeight) {
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final chart = buildChart(mediaQuery, appBarHeight);
+    final txList = buildTxList(mediaQuery, appBarHeight);
     return SafeArea(
       child: SingleChildScrollView(
         child: Column(

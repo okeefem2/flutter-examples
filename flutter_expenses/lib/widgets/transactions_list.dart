@@ -24,11 +24,23 @@ class TransactionList extends StatelessWidget {
       // ListView.builder does not render what is not shown
       child:
           transactions.isNotEmpty // TODO set it this way to test, need to flip
-              ? ListView.builder(
-                  itemCount: transactions.length,
-                  itemBuilder: (ctx, index) =>
-                      TransactionCard(transactions[index], deleteTransaction),
+              ? ListView(
+                  // ListView builder doesn't work with the keys right now...
+                  // So use the builder when the children are stateless! but not when stateful
+                  children: transactions
+                      .map((tx) => TransactionCard(
+                          key: ValueKey(tx.id),
+                          transaction: tx,
+                          deleteTransaction: deleteTransaction))
+                      .toList(),
                 )
+              // ? ListView.builder(
+              //     itemCount: transactions.length,
+              //     itemBuilder: (ctx, index) => TransactionCard(
+              //         key: ValueKey(transactions[index].id),
+              //         transaction: transactions[index],
+              //         deleteTransaction: deleteTransaction),
+              //   )
               : LayoutBuilder(builder: buildNoTx),
     );
   }
@@ -40,7 +52,7 @@ class TransactionList extends StatelessWidget {
           'No transactions added yet!',
           style: Theme.of(context).textTheme.title,
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
         Container(

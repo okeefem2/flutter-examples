@@ -5,6 +5,10 @@ class ChartBar extends StatelessWidget {
   final double amount;
   final double amountPercent;
 
+  // Const constructor needs all final props
+  // Every instance is immutable when created
+  // Then if we know that a widget will never change after compile time, using const in front of the object
+  // creation will make it so the widget is never rebuilt
   const ChartBar({Key key, this.label, this.amount, this.amountPercent})
       : super(key: key);
   @override
