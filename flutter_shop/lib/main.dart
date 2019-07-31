@@ -3,10 +3,12 @@ import 'package:flutter_shop/pages/cart_page.dart';
 import 'package:flutter_shop/pages/orders_page.dart';
 import 'package:flutter_shop/pages/product_detail_page.dart';
 import 'package:flutter_shop/pages/product_overview_page.dart';
+import 'package:flutter_shop/pages/user_products_page.dart';
 import 'package:flutter_shop/providers/orders_provider.dart';
 import 'package:flutter_shop/providers/products_provider.dart';
 import 'package:provider/provider.dart';
 
+import 'pages/product_form_page.dart';
 import 'providers/cart_provider.dart';
 
 void main() => runApp(MyApp());
@@ -66,6 +68,9 @@ class _MyAppState extends State<MyApp> {
           ProductDetailPage.route: (ctx) => ProductDetailPage(),
           CartPage.route: (ctx) => CartPage(),
           OrdersPage.route: (ctx) => OrdersPage(),
+          UserProductsPage.route: (ctx) => UserProductsPage(),
+          UserProductsPage.route: (ctx) => UserProductsPage(),
+          ProductFormPage.route: (ctx) => ProductFormPage(),
         },
         // Could be used for dynamic routes
         // onGenerateRoute: (settings) =>

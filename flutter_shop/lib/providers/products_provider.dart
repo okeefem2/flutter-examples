@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'product_provider.dart';
@@ -52,5 +53,40 @@ class ProductsProvider with ChangeNotifier {
           '$id was not found in products, or there are more than one product with this id');
       return null;
     });
+  }
+
+  void saveProduct(Product product) {
+    if (product.id == null) {
+      final newProduct = product.update(id: DateTime.now().toString());
+      _products.add(newProduct);
+    } else {
+      final productIndex = _products.indexWhere((p) => p.id == product.id);
+      if (productIndex < 0) return; // No product exists :(
+      _products[productIndex] = product;
+    }
+
+    notifyListeners();
+  }
+
+  void deleteProduct(String id) {
+    _products.removeWhere((p) => p.id == id);
+    notifyListeners();
+  }
+
+  void getFirestoreData() {
+    // Gives us a stream
+    // Use Streambuilder for a list
+    Firestore.instance.collection('collectionname').snapshots();
+
+    // if snapshot.hasData tells if we have data or not
+    // snapshot.data.documents is where the docs live
+
+    // To update with race condition mitigation
+    // Firestore.instance.runTransaction((transaction) async {
+    //   freshSnap = await transaction.get(document.reference);
+    //   await transaction.update(freshSnap.reference, {
+    //     'votes': freshSnap['votes'] + 1
+    //   });
+    // });
   }
 }

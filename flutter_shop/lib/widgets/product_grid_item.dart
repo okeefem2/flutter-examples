@@ -41,6 +41,16 @@ class ProductGridItem extends StatelessWidget {
                 price: product.price,
                 title: product.title,
               );
+              // Grab the nearest scaffold in the tree of the given context
+              Scaffold.of(context).hideCurrentSnackBar(); // Prevent multi snack
+              Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('${product.title} added to cart!'),
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      cart.removeOne(product.id);
+                    },
+                  )));
             },
           ),
         ),

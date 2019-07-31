@@ -11,6 +11,30 @@ class CartListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
+      confirmDismiss: (direction) {
+        return showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('Are you sure'),
+                  content: Text('There is no going back'),
+                  contentPadding: EdgeInsets.all(10),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('No'),
+                      onPressed: () {
+                        // Pop the dialog off the stack and yield the desired value to the dialog future
+                        Navigator.of(ctx).pop(false);
+                      },
+                    ),
+                    FlatButton(
+                      child: Text('Yes'),
+                      onPressed: () {
+                        Navigator.of(ctx).pop(true);
+                      },
+                    ),
+                  ],
+                ));
+      },
       direction: DismissDirection.endToStart,
       key: ValueKey(cartItem.id),
       background: Container(
