@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shop/providers/products_provider.dart';
+import 'package:flutter_shop/models/product.dart';
+import 'package:flutter_shop/services/products_service.dart';
 import 'package:flutter_shop/widgets/app_drawer.dart';
 import 'package:flutter_shop/widgets/user_product_list_item.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,7 @@ class UserProductsPage extends StatelessWidget {
   static const route = '/user-products';
   @override
   Widget build(BuildContext context) {
-    final productsProvider = Provider.of<ProductsProvider>(context);
+    final productsService = Provider.of<ProductsService>(context);
     return Scaffold(
         drawer: AppDrawer(),
         appBar: AppBar(
@@ -24,17 +25,24 @@ class UserProductsPage extends StatelessWidget {
             )
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: ListView.builder(
-              itemCount: productsProvider.products.length,
-              itemBuilder: (_, index) => Column(
-                    children: <Widget>[
-                      UserProductListItem(
-                          product: productsProvider.products[index]),
-                      Divider(),
-                    ],
-                  )),
-        ));
+        body: StreamProvider<List<Product>>.value(
+            value: productsService.products,
+            initialData: null,
+            child: buildProductList(context)));
+  }
+
+  Padding buildProductList(BuildContext context) {
+    var products = Provider.of<List<Product>>(context);
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: ListView.builder(
+          itemCount: products.length,
+          itemBuilder: (_, index) => Column(
+                children: <Widget>[
+                  UserProductListItem(product: products[index]),
+                  Divider(),
+                ],
+              )),
+    );
   }
 }

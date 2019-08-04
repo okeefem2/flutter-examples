@@ -1,59 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shop/providers/cart_provider.dart';
-import 'package:flutter_shop/providers/orders_provider.dart';
+import 'package:flutter_shop/models/cart_item.dart';
+import 'package:flutter_shop/services/cart_service.dart';
+import 'package:flutter_shop/services/orders_service.dart';
 import 'package:flutter_shop/widgets/cart_list_item.dart';
 import 'package:provider/provider.dart';
 
 class CartPage extends StatelessWidget {
   static const route = '/cart';
+  final userId = '12345'; // TODO when user is determined
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartProvider>(context);
+    final cartService = Provider.of<CartService>(context, listen: false);
     return Scaffold(
       appBar: AppBar(title: Text('Your Cart')),
-      body: Column(
-        children: <Widget>[
-          Card(
-              margin: EdgeInsets.all(15),
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Text('Total', style: TextStyle(fontSize: 20)),
-                      const Spacer(),
-                      Chip(
-                        label: Text('\$${cart.total.toStringAsFixed(2)}',
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .primaryTextTheme
-                                    .title
-                                    .color)),
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                      FlatButton(
-                        child: const Text('Order Now'),
-                        onPressed: () {
-                          Provider.of<OrdersProvider>(context, listen: false)
-                              .addOrder(
-                                  cart.cartItems.values.toList(), cart.total);
-                          cart.clear();
-                        },
-                        textColor: Theme.of(context).primaryColor,
-                      )
-                    ],
-                  ))),
-          const SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
-              itemCount: cart.cartItems.length,
-              itemBuilder: (context, index) => CartListItem(
-                  cartItem: cart.getByIndex(index),
-                  productId: cart.getIdByIndex(index)),
-            ),
-          )
-        ],
-      ),
+      body: StreamProvider<List<CartItem>>.value(
+          value: cartService.getCartItems(
+              userId), // TODO use actual user Id when that part is implemented
+          initialData: [],
+          child: buildCart(context, cartService)),
+    );
+  }
+
+  Widget buildCart(BuildContext context, CartService cartService) {
+    var cartItems = Provider.of<List<CartItem>>(context);
+    final cartTotal = cartService.getTotal(cartItems);
+    return Column(
+      children: <Widget>[
+        Card(
+            margin: EdgeInsets.all(15),
+            child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    const Text('Total', style: TextStyle(fontSize: 20)),
+                    const Spacer(),
+                    Chip(
+                      label: Text('\$${cartTotal.toStringAsFixed(2)}',
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .primaryTextTheme
+                                  .title
+                                  .color)),
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
+                    FlatButton(
+                      child: const Text('Order Now'),
+                      onPressed: () {
+                        Provider.of<OrdersService>(context, listen: false)
+                            .addOrder(userId, cartItems, cartTotal);
+                        cartService.clear(userId);
+                      },
+                      textColor: Theme.of(context).primaryColor,
+                    )
+                  ],
+                ))),
+        const SizedBox(height: 10),
+        Expanded(
+          child: ListView.builder(
+            itemCount: cartItems.length,
+            itemBuilder: (context, index) =>
+                CartListItem(cartItem: cartItems[index]),
+          ),
+        )
+      ],
     );
   }
 }

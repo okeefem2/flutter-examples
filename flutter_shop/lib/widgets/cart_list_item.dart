@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shop/providers/cart_provider.dart';
+import 'package:flutter_shop/models/cart_item.dart';
+import 'package:flutter_shop/services/cart_service.dart';
 import 'package:provider/provider.dart';
 
 class CartListItem extends StatelessWidget {
   final CartItem cartItem;
-  final String productId;
 
-  const CartListItem({Key key, this.cartItem, this.productId})
-      : super(key: key);
+  const CartListItem({Key key, this.cartItem}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Dismissible(
@@ -36,7 +35,7 @@ class CartListItem extends StatelessWidget {
                 ));
       },
       direction: DismissDirection.endToStart,
-      key: ValueKey(cartItem.id),
+      key: ValueKey(cartItem.productId),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
@@ -49,7 +48,8 @@ class CartListItem extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       ),
       onDismissed: (direction) {
-        Provider.of<CartProvider>(context, listen: false).remove(productId);
+        Provider.of<CartService>(context, listen: false).remove('12345',
+            cartItem.productId); // TODO change userId when that is done
       },
       child: Card(
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 5),

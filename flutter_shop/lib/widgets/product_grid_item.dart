@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shop/providers/cart_provider.dart';
-import 'package:flutter_shop/providers/product_provider.dart';
+import 'package:flutter_shop/models/product.dart';
+import 'package:flutter_shop/services/cart_service.dart';
 import 'package:provider/provider.dart';
 
 class ProductGridItem extends StatelessWidget {
+  final Product product;
+  final userId = '12345'; // TODO when user is determined
+
+  const ProductGridItem({Key key, this.product}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(
-        context); // get the nearest provided item in the tree of type Product
-    final cart = Provider.of<CartProvider>(context, listen: false);
+    final cartService = Provider.of<CartService>(context, listen: false);
     // Using provider of will re run the entire build method, but you can use the Consumer widget around what you specifically want to rebuild when a change is
     // consumed. Also the 3rd arg to the consumer builder is a child widget/tree that will not rebuild when new data is consumed
     return ClipRRect(
@@ -36,7 +39,8 @@ class ProductGridItem extends StatelessWidget {
             icon: Icon(Icons.add_shopping_cart),
             color: Theme.of(context).accentColor,
             onPressed: () {
-              cart.add(
+              cartService.add(
+                userId,
                 productId: product.id,
                 price: product.price,
                 title: product.title,
@@ -48,7 +52,7 @@ class ProductGridItem extends StatelessWidget {
                   action: SnackBarAction(
                     label: 'UNDO',
                     onPressed: () {
-                      cart.removeOne(product.id);
+                      cartService.removeOne(userId, product.id);
                     },
                   )));
             },

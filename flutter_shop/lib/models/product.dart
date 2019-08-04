@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
-class Product with ChangeNotifier {
+class Product {
   final String id;
   final String title;
   final String description;
   final String imageUrl;
   final double price;
   bool isFavorite;
-  DocumentReference reference; // TODO make final when app is reactive
 
   Product({
     @required this.id,
@@ -21,7 +20,6 @@ class Product with ChangeNotifier {
 
   void toggleFavorite() {
     isFavorite = !isFavorite;
-    notifyListeners();
   }
 
   Product update({
@@ -41,18 +39,27 @@ class Product with ChangeNotifier {
     );
   }
 
-  Product.fromMap(Map<String, dynamic> map, {this.reference})
-      : assert(map['id'] != null),
-        assert(map['title'] != null),
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'description': description,
+      'price': price,
+      'imageUrl': imageUrl,
+      'isFavorite': isFavorite,
+    };
+  }
+
+  Product.fromMap(Map<String, dynamic> map, {this.id})
+      : assert(map['title'] != null),
         assert(map['description'] != null),
-        assert(map['imageUrl'] != null),
         assert(map['price'] != null),
-        id = map['id'],
+        assert(map['imageUrl'] != null),
         title = map['title'],
         description = map['description'],
+        price = map['price'],
         imageUrl = map['imageUrl'],
-        price = map['price'];
+        isFavorite = map['isFavorite'];
 
   Product.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, reference: snapshot.reference);
+      : this.fromMap(snapshot.data, id: snapshot.documentID);
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop/models/cart_item.dart';
 import 'package:flutter_shop/pages/cart_page.dart';
-import 'package:flutter_shop/providers/cart_provider.dart';
-import 'package:flutter_shop/providers/products_provider.dart';
+import 'package:flutter_shop/services/cart_service.dart';
 import 'package:flutter_shop/widgets/app_drawer.dart';
 import 'package:flutter_shop/widgets/badge.dart';
 import 'package:flutter_shop/widgets/products_grid.dart';
@@ -19,8 +19,12 @@ class ProductOverviewPage extends StatefulWidget {
 
 class _ProductOverviewPageState extends State<ProductOverviewPage> {
   bool _favoritesOnly = false;
+  final userId = '12345'; // TODO when user is determined
+
   @override
   Widget build(BuildContext context) {
+    final cartService = Provider.of<CartService>(context, listen: false);
+
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
@@ -49,21 +53,29 @@ class _ProductOverviewPageState extends State<ProductOverviewPage> {
               ),
             ],
           ),
-          Consumer<CartProvider>(
-              builder: (ctx, cartData, child) => Badge(
-                    value: cartData.count.toString(),
-                    child: child,
-                  ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(CartPage.route);
-                },
-                icon: const Icon(Icons.shopping_cart),
-              )),
+          StreamProvider<List<CartItem>>.value(
+              value: cartService.getCartItems(
+                  userId), // TODO use actual user Id when that part is implemented
+              initialData: [],
+              child: buildCartButton(context, cartService))
           // )
         ],
       ),
       body: new ProductsGrid(favoritesOnly: _favoritesOnly),
+    );
+  }
+
+  Widget buildCartButton(BuildContext context, CartService cartService) {
+    var cartItems = Provider.of<List<CartItem>>(context);
+
+    return Badge(
+      value: cartService.getTotalQuantity(cartItems).toString(),
+      child: IconButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(CartPage.route);
+        },
+        icon: const Icon(Icons.shopping_cart),
+      ),
     );
   }
 }

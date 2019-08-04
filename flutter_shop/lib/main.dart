@@ -4,12 +4,12 @@ import 'package:flutter_shop/pages/orders_page.dart';
 import 'package:flutter_shop/pages/product_detail_page.dart';
 import 'package:flutter_shop/pages/product_overview_page.dart';
 import 'package:flutter_shop/pages/user_products_page.dart';
-import 'package:flutter_shop/providers/orders_provider.dart';
-import 'package:flutter_shop/providers/products_provider.dart';
+import 'package:flutter_shop/services/cart_service.dart';
+import 'package:flutter_shop/services/orders_service.dart';
+import 'package:flutter_shop/services/products_service.dart';
 import 'package:provider/provider.dart';
 
 import 'pages/product_form_page.dart';
-import 'providers/cart_provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,14 +24,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(
-          value: ProductsProvider(),
+        Provider<CartService>.value(
+          value: CartService(),
         ),
-        ChangeNotifierProvider.value(
-          value: CartProvider(),
+        Provider<OrdersService>.value(
+          value: OrdersService(),
         ),
-        ChangeNotifierProvider.value(
-          value: OrdersProvider(),
+        Provider<ProductsService>.value(
+          value: ProductsService(),
         ),
       ],
       child: MaterialApp(
