@@ -27,7 +27,7 @@ class ProductGridItem extends StatelessWidget {
           title: Text(product.title, textAlign: TextAlign.center),
           backgroundColor: Colors.black87,
           leading: IconButton(
-            icon: product.isFavorite
+            icon: product.isFavorite != null && product.isFavorite
                 ? Icon(Icons.favorite)
                 : Icon(Icons.favorite_border),
             color: Theme.of(context).accentColor,

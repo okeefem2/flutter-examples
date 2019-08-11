@@ -11,7 +11,8 @@ class OrdersService {
         .snapshots()
         .map((snapshot) {
       return snapshot.documents
-          .map((docSnapshot) => OrderItem.fromSnapshot(docSnapshot));
+          .map((docSnapshot) => OrderItem.fromSnapshot(docSnapshot))
+          .toList();
     });
   }
 
@@ -22,7 +23,8 @@ class OrdersService {
         .snapshots()
         .map((snapshot) {
       return snapshot.documents
-          .map((docSnapshot) => CartItem.fromSnapshot(docSnapshot));
+          .map((docSnapshot) => CartItem.fromSnapshot(docSnapshot))
+          .toList();
     });
   }
 

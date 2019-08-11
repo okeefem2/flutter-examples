@@ -7,7 +7,8 @@ class ProductsService {
   Stream<List<Product>> get products {
     return _productsRef.snapshots().map((snapshot) {
       return snapshot.documents
-          .map((docSnapshot) => Product.fromSnapshot(docSnapshot));
+          .map((docSnapshot) => Product.fromSnapshot(docSnapshot))
+          .toList();
     });
   }
 
@@ -17,7 +18,8 @@ class ProductsService {
         .snapshots()
         .map((snapshot) {
       return snapshot.documents
-          .map((docSnapshot) => Product.fromSnapshot(docSnapshot));
+          .map((docSnapshot) => Product.fromSnapshot(docSnapshot))
+          .toList();
     });
     ;
   }

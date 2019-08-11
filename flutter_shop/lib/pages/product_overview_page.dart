@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shop/models/cart_item.dart';
-import 'package:flutter_shop/pages/cart_page.dart';
 import 'package:flutter_shop/services/cart_service.dart';
 import 'package:flutter_shop/widgets/app_drawer.dart';
-import 'package:flutter_shop/widgets/badge.dart';
+import 'package:flutter_shop/widgets/cart_button.dart';
 import 'package:flutter_shop/widgets/products_grid.dart';
 import 'package:provider/provider.dart';
 
@@ -57,25 +56,11 @@ class _ProductOverviewPageState extends State<ProductOverviewPage> {
               value: cartService.getCartItems(
                   userId), // TODO use actual user Id when that part is implemented
               initialData: [],
-              child: buildCartButton(context, cartService))
+              child: CartButton())
           // )
         ],
       ),
       body: new ProductsGrid(favoritesOnly: _favoritesOnly),
-    );
-  }
-
-  Widget buildCartButton(BuildContext context, CartService cartService) {
-    var cartItems = Provider.of<List<CartItem>>(context);
-
-    return Badge(
-      value: cartService.getTotalQuantity(cartItems).toString(),
-      child: IconButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed(CartPage.route);
-        },
-        icon: const Icon(Icons.shopping_cart),
-      ),
     );
   }
 }

@@ -16,10 +16,13 @@ class ProductDetailPage extends StatelessWidget {
     return StreamProvider<Product>.value(
         value: productsService.getById(productId),
         initialData: null,
-        child: buildScaffold(context));
+        child: new ProductDetail());
   }
+}
 
-  Widget buildScaffold(BuildContext context) {
+class ProductDetail extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     var product = Provider.of<Product>(context);
     // get product
     return Scaffold(

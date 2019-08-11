@@ -28,10 +28,13 @@ class UserProductsPage extends StatelessWidget {
         body: StreamProvider<List<Product>>.value(
             value: productsService.products,
             initialData: null,
-            child: buildProductList(context)));
+            child: new ProductsList()));
   }
+}
 
-  Padding buildProductList(BuildContext context) {
+class ProductsList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     var products = Provider.of<List<Product>>(context);
     return Padding(
       padding: const EdgeInsets.all(10),

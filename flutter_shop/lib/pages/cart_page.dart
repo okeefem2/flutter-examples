@@ -17,11 +17,23 @@ class CartPage extends StatelessWidget {
           value: cartService.getCartItems(
               userId), // TODO use actual user Id when that part is implemented
           initialData: [],
-          child: buildCart(context, cartService)),
+          child: new Cart(userId: userId, cartService: cartService)),
     );
   }
+}
 
-  Widget buildCart(BuildContext context, CartService cartService) {
+class Cart extends StatelessWidget {
+  const Cart({
+    Key key,
+    @required this.userId,
+    @required this.cartService,
+  }) : super(key: key);
+
+  final String userId;
+  final CartService cartService;
+
+  @override
+  Widget build(BuildContext context) {
     var cartItems = Provider.of<List<CartItem>>(context);
     final cartTotal = cartService.getTotal(cartItems);
     return Column(

@@ -18,10 +18,13 @@ class OrdersPage extends StatelessWidget {
             value: ordersService.getUserOrders(
                 userId), // TODO use actual user Id when that part is implemented
             initialData: [],
-            child: buildListView(context)));
+            child: new OrdersList()));
   }
+}
 
-  ListView buildListView(context) {
+class OrdersList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     var orders = Provider.of<List<OrderItem>>(context);
     return ListView.builder(
       itemBuilder: (ctx, index) => OrderListItem(orderItem: orders[index]),

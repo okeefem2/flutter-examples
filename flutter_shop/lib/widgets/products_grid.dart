@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class ProductsGrid extends StatelessWidget {
   final bool favoritesOnly;
 
-  const ProductsGrid({Key key, this.favoritesOnly}) : super(key: key);
+  const ProductsGrid({Key key, this.favoritesOnly = false}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final productsService = Provider.of<ProductsService>(context);
@@ -17,10 +17,13 @@ class ProductsGrid extends StatelessWidget {
             ? productsService.favorites
             : productsService.products,
         initialData: null,
-        child: buildGrid(context));
+        child: new ProductGridView());
   }
+}
 
-  Widget buildGrid(BuildContext context) {
+class ProductGridView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     var products = Provider.of<List<Product>>(context);
     return GridView.builder(
       padding: const EdgeInsets.all(10),
