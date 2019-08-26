@@ -1,17 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_shop/models/cart.dart';
 import 'package:flutter_shop/models/cart_item.dart';
 
 class CartService {
   final _cartsRef = Firestore.instance.collection('carts');
-
-  // // One cart per user
-  // Stream<Cart> getCartForUser(userId) {
-  //   return _cartsRef
-  //       .document(userId)
-  //       .snapshots()
-  //       .map((snapshot) => Cart.fromSnapshot(snapshot));
-  // }
 
   Stream<List<CartItem>> getCartItems(userId) {
     return _cartsRef
@@ -34,49 +25,60 @@ class CartService {
         0, (count, cartItem) => count + (cartItem.price * cartItem.quantity));
   }
 
-  void add(String userId,
+  Future<void> add(String userId,
       {String productId, double price, String title, int quantity = 1}) async {
     var cartItemsRef = _cartsRef.document(userId).collection('cartItems');
-    var cartItem =
-        CartItem.fromSnapshot(await cartItemsRef.document(productId).get());
-    if (cartItem != null) {
-      cartItemsRef
+    var cartItemSnapshot = await cartItemsRef.document(productId).get();
+
+    if (cartItemSnapshot.exists) {
+      var cartItem = CartItem.fromSnapshot(cartItemSnapshot);
+      return cartItemsRef
           .document(productId)
           .updateData({'quantity': cartItem.quantity + quantity});
     } else {
+      print('Adding to cart');
       var newCartItem = CartItem(
         productId: productId,
         title: title,
         price: price,
         quantity: quantity,
       );
-      cartItemsRef.document(productId).setData(newCartItem.toMap());
+      return cartItemsRef.document(productId).setData(newCartItem.toMap());
     }
   }
 
-  void remove(String userId, String productId) {
-    _cartsRef
+  Future<void> remove(String userId, String productId) {
+    return _cartsRef
         .document(userId)
         .collection('cartItems')
         .document(productId)
         .delete();
   }
 
-  void clear(String userId) {
-    _cartsRef.document(userId).delete();
+  Future<void> clear(String userId) {
+    print(userId);
+
+    return Firestore.instance.runTransaction((Transaction tx) async {
+      var cartDocRef = _cartsRef.document(userId);
+      var cartItemDocs =
+          await cartDocRef.collection('cartItems').getDocuments();
+      cartItemDocs.documents.forEach((cartItemSnapshot) async =>
+          await cartItemSnapshot.reference.delete());
+      await cartDocRef.delete();
+    });
   }
 
-  void removeOne(String userId, String productId) async {
+  Future<void> removeOne(String userId, String productId) async {
     var cartItemsRef = _cartsRef.document(userId).collection('cartItems');
     var cartItem =
         CartItem.fromSnapshot(await cartItemsRef.document(productId).get());
 
     if (cartItem.quantity > 1) {
-      cartItemsRef
+      return cartItemsRef
           .document(cartItem.productId)
           .updateData({'quantity': cartItem.quantity - 1});
     } else {
-      remove(userId, cartItem.productId);
+      return remove(userId, cartItem.productId);
     }
   }
 }

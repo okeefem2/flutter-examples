@@ -28,7 +28,8 @@ class OrdersService {
     });
   }
 
-  void addOrder(String userId, List<CartItem> cartItems, double total) async {
+  Future<void> addOrder(
+      String userId, List<CartItem> cartItems, double total) async {
     var orderRef = await _ordersRef
         .add({'amount': total, 'dateTime': DateTime.now(), 'userId': userId});
 

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop/models/product.dart';
 import 'package:flutter_shop/services/products_service.dart';
@@ -12,6 +13,7 @@ class UserProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsService = Provider.of<ProductsService>(context);
+    var user = Provider.of<FirebaseUser>(context, listen: false);
     return Scaffold(
         drawer: AppDrawer(),
         appBar: AppBar(
@@ -26,8 +28,8 @@ class UserProductsPage extends StatelessWidget {
           ],
         ),
         body: StreamProvider<List<Product>>.value(
-            value: productsService.products,
-            initialData: null,
+            value: productsService.getUserProducts(user.uid),
+            initialData: [],
             child: new ProductsList()));
   }
 }

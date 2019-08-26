@@ -15,7 +15,13 @@ class ProductDetailPage extends StatelessWidget {
 
     return StreamProvider<Product>.value(
         value: productsService.getById(productId),
-        initialData: null,
+        initialData: new Product(
+            id: '',
+            description: '',
+            title: '',
+            price: 0,
+            userId: '',
+            imageUrl: null),
         child: new ProductDetail());
   }
 }
@@ -26,31 +32,43 @@ class ProductDetail extends StatelessWidget {
     var product = Provider.of<Product>(context);
     // get product
     return Scaffold(
-        appBar: AppBar(
-            title: Text(
-          product.title,
-        )),
-        body: SingleChildScrollView(
-          child: Column(children: <Widget>[
-            Container(
-              height: 300,
-              child: Image.network(product.imageUrl, fit: BoxFit.cover),
-              width: double.infinity,
-            ),
-            SizedBox(height: 10),
-            Text('\$${product.price}',
+        // appBar: AppBar(
+        //     title: Text(
+        //   product.title,
+        // )),
+        body: CustomScrollView(
+      slivers: <Widget>[
+        SliverAppBar(
+          expandedHeight: 300,
+          pinned: true, // Sticky header
+          flexibleSpace: FlexibleSpaceBar(
+            title: Text(product?.title),
+            background: Hero(
+                tag: product?.id,
+                child: product?.imageUrl != null
+                    ? Image.network(product?.imageUrl, fit: BoxFit.cover)
+                    : Image.asset('assets/images/product-placeholder.png')),
+          ),
+        ),
+        SliverList(
+          delegate: SliverChildListDelegate([
+            SizedBox(height: 20),
+            Text('\$${product?.price}',
                 style: TextStyle(color: Colors.grey, fontSize: 20)),
-            SizedBox(height: 10),
+            SizedBox(height: 20),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               child: Text(
-                product.description,
+                product?.description,
                 textAlign: TextAlign.center,
                 softWrap: true,
               ),
             ),
+            SizedBox(height: 20),
           ]),
-        ));
+        )
+      ],
+    ));
   }
 }

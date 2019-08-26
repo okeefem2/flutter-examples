@@ -25,7 +25,7 @@ class OrderItem {
       : assert(map['amount'] != null),
         assert(map['dateTime'] != null),
         amount = map['amount'],
-        dateTime = map['dateTime'];
+        dateTime = (map['dateTime'] as Timestamp).toDate();
 
   OrderItem.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, id: snapshot.documentID);

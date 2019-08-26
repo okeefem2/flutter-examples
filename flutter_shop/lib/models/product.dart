@@ -7,6 +7,7 @@ class Product {
   final String description;
   final String imageUrl;
   final double price;
+  final String userId;
   bool isFavorite;
 
   Product({
@@ -15,18 +16,16 @@ class Product {
     @required this.description,
     @required this.imageUrl,
     @required this.price,
+    @required this.userId,
     this.isFavorite = false,
   });
-
-  void toggleFavorite() {
-    isFavorite = !isFavorite;
-  }
 
   Product update({
     String id,
     String title,
     String description,
     String imageUrl,
+    String userId,
     double price,
   }) {
     return Product(
@@ -35,7 +34,7 @@ class Product {
       description: description == null ? this.description : description,
       price: price == null ? this.price : price,
       imageUrl: imageUrl == null ? this.imageUrl : imageUrl,
-      isFavorite: this.isFavorite,
+      userId: userId == null ? this.userId : userId,
     );
   }
 
@@ -45,21 +44,23 @@ class Product {
       'description': description,
       'price': price,
       'imageUrl': imageUrl,
-      'isFavorite': isFavorite,
+      'userId': userId,
     };
   }
 
-  Product.fromMap(Map<String, dynamic> map, {this.id})
+  Product.fromMap(Map<String, dynamic> map, {this.id, this.isFavorite})
       : assert(map['title'] != null),
         assert(map['description'] != null),
         assert(map['price'] != null),
         assert(map['imageUrl'] != null),
+        assert(map['userId'] != null),
         title = map['title'],
         description = map['description'],
         price = map['price'],
         imageUrl = map['imageUrl'],
-        isFavorite = map['isFavorite'];
+        userId = map['userId'];
 
-  Product.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, id: snapshot.documentID);
+  Product.fromSnapshot(DocumentSnapshot snapshot, {isFavorite = false})
+      : this.fromMap(snapshot.data,
+            id: snapshot.documentID, isFavorite: isFavorite);
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop/models/cart_item.dart';
 import 'package:flutter_shop/services/cart_service.dart';
@@ -12,17 +13,18 @@ enum FilterOptions {
 }
 
 class ProductOverviewPage extends StatefulWidget {
+  static const route = 'product-overview';
   @override
   _ProductOverviewPageState createState() => _ProductOverviewPageState();
 }
 
 class _ProductOverviewPageState extends State<ProductOverviewPage> {
   bool _favoritesOnly = false;
-  final userId = '12345'; // TODO when user is determined
 
   @override
   Widget build(BuildContext context) {
     final cartService = Provider.of<CartService>(context, listen: false);
+    var user = Provider.of<FirebaseUser>(context, listen: false);
 
     return Scaffold(
       drawer: AppDrawer(),
@@ -53,8 +55,8 @@ class _ProductOverviewPageState extends State<ProductOverviewPage> {
             ],
           ),
           StreamProvider<List<CartItem>>.value(
-              value: cartService.getCartItems(
-                  userId), // TODO use actual user Id when that part is implemented
+              value: cartService.getCartItems(user
+                  .uid), // TODO use actual user Id when that part is implemented
               initialData: [],
               child: CartButton())
           // )

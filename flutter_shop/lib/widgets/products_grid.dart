@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop/models/product.dart';
 import 'package:flutter_shop/services/products_service.dart';
@@ -11,12 +12,15 @@ class ProductsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsService = Provider.of<ProductsService>(context);
+    var user = Provider.of<FirebaseUser>(context, listen: false);
 
     return StreamProvider<List<Product>>.value(
         value: favoritesOnly
-            ? productsService.favorites
-            : productsService.products,
-        initialData: null,
+            ? productsService
+                .getProducts(user.uid)
+                .map((products) => products.where((p) => p.isFavorite).toList())
+            : productsService.getProducts(user.uid),
+        initialData: [],
         child: new ProductGridView());
   }
 }
